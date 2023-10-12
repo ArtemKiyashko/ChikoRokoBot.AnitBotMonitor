@@ -6,7 +6,13 @@
                 "isEnabled": true,
                 "excludedTypes": "Request"
             },
-            "enableLiveMetricsFilters": true
+            "enableLiveMetricsFilters": true,
+            "snapshotConfiguration": {
+                "isEnabled": true
+            }
+        },
+        "logLevel": {
+            "ChikoRokoBot.AntiBotMonitor.Managers.NotificationManager": "Information"
         }
     }
 }

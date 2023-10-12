@@ -5,6 +5,18 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.2.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Azure.Storage.Queues" Version="12.16.0" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.0" />
+    <PackageReference Include="Azure.Data.Tables" Version="12.8.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Options\" />
+    <None Remove="Interfaces\" />
+    <None Remove="Clients\" />
+    <None Remove="Models\" />
+    <None Remove="Managers\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -14,5 +26,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Options\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Clients\" />
+    <Folder Include="Models\" />
+    <Folder Include="Managers\" />
   </ItemGroup>
 </Project>
