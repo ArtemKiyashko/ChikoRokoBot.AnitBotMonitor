@@ -1,4 +1,6 @@
-﻿using Azure.Identity;
+﻿using System.Net;
+using System.Net.Http;
+using Azure.Identity;
 using Azure.Storage.Queues;
 using ChikoRokoBot.AntiBotMonitor.Clients;
 using ChikoRokoBot.AntiBotMonitor.Interfaces;
@@ -15,7 +17,8 @@ namespace ChikoRokoBot.AntiBotMonitor
 	public class Startup : FunctionsStartup
 	{
         private IConfigurationRoot _functionConfig;
-        private AntiBotMonitorOptions _antiBotMonitorOptions = new();
+        private readonly AntiBotMonitorOptions _antiBotMonitorOptions = new();
+        private readonly WebProxyOptions _webProxyOptions = new();
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
@@ -25,12 +28,32 @@ namespace ChikoRokoBot.AntiBotMonitor
 
             builder.Services.Configure<AntiBotMonitorOptions>(_functionConfig.GetSection(nameof(AntiBotMonitorOptions)));
             builder.Services.Configure<ChikoRokoClientOptions>(_functionConfig.GetSection(nameof(ChikoRokoClientOptions)));
-            _functionConfig.GetSection(nameof(AntiBotMonitorOptions)).Bind(_antiBotMonitorOptions);
+            builder.Services.Configure<WebProxyOptions>(_functionConfig.GetSection(nameof(WebProxyOptions)));
 
-            builder.Services.AddScoped<IHttpClient, ChikoRokoClient>();
+            _functionConfig.GetSection(nameof(AntiBotMonitorOptions)).Bind(_antiBotMonitorOptions);
+            _functionConfig.GetSection(nameof(WebProxyOptions)).Bind(_webProxyOptions);
+
             builder.Services.AddScoped<INotificationManager, NotificationManager>();
 
-            builder.Services.AddHttpClient<ChikoRokoClient>();
+            builder.Services.AddHttpClient<ChikoRokoClient>().ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var httpClientHandler = new HttpClientHandler();
+
+                if (!string.IsNullOrEmpty(_webProxyOptions.Address) && _webProxyOptions.Port != default)
+                {
+                    var proxy = new WebProxy(_webProxyOptions.Address, _webProxyOptions.Port);
+
+                    if (!string.IsNullOrEmpty(_webProxyOptions.Username))
+                        proxy.Credentials = new NetworkCredential(_webProxyOptions.Username, _webProxyOptions.Password);
+
+                    httpClientHandler.UseProxy = true;
+                    httpClientHandler.Proxy = proxy;
+                    httpClientHandler.PreAuthenticate = true;
+                    httpClientHandler.UseDefaultCredentials = false;
+                }
+
+                return httpClientHandler;
+            });
 
             builder.Services.AddAzureClients(clientBuilder => {
                 clientBuilder.UseCredential(new DefaultAzureCredential());

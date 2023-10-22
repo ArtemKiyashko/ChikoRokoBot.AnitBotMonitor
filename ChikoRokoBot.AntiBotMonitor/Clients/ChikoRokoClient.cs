@@ -2,13 +2,12 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using ChikoRokoBot.AntiBotMonitor.Interfaces;
 using ChikoRokoBot.AntiBotMonitor.Options;
 using Microsoft.Extensions.Options;
 
 namespace ChikoRokoBot.AntiBotMonitor.Clients
 {
-	public class ChikoRokoClient : IHttpClient
+	public class ChikoRokoClient
     {
         private readonly HttpClient _httpClient;
         private readonly ChikoRokoClientOptions _options;

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Azure;
 using Azure.Data.Tables;
+using ChikoRokoBot.AntiBotMonitor.Clients;
 using ChikoRokoBot.AntiBotMonitor.Interfaces;
 using ChikoRokoBot.AntiBotMonitor.Models;
 using ChikoRokoBot.AntiBotMonitor.Options;
@@ -12,13 +13,13 @@ namespace ChikoRokoBot.AntiBotMonitor
 {
     public class Monitor
     {
-        private readonly IHttpClient _httpClient;
+        private readonly ChikoRokoClient _httpClient;
         private readonly INotificationManager _notificationManager;
         private readonly TableClient _siteStateTableClient;
         private readonly AntiBotMonitorOptions _antiBotMonitorOptions;
 
         public Monitor(
-            IHttpClient httpClient,
+            ChikoRokoClient httpClient,
             INotificationManager notificationManager,
             TableServiceClient tableServiceClient,
             IOptions<AntiBotMonitorOptions> options)
